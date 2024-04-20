@@ -1,0 +1,152 @@
+openapi: 3.0.0
+info:
+  title: API Docs To-do List
+  description: Descrição da API criada para o To-do List.
+  version: 1.0.0
+servers:
+  - url: http://localhost:5000
+paths:
+  /users:
+    post:
+      summary: Criar usuário
+      description: Cria um novo usuário
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Sucesso
+  /users/{id}:
+    get:
+      summary: Obter usuário por ID
+      description: Obtém um usuário pelo seu ID
+      parameters:
+        - name: id
+          in: path
+          description: ID do usuário a ser obtido
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Sucesso
+    put:
+      summary: Atualizar usuário por ID
+      description: Atualiza um usuário existente pelo seu ID
+      parameters:
+        - name: id
+          in: path
+          description: ID do usuário a ser atualizado
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Sucesso
+    delete:
+      summary: Deletar usuário por ID
+      description: Deleta um usuário existente pelo seu ID
+      parameters:
+        - name: id
+          in: path
+          description: ID do usuário a ser deletado
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Sucesso
+  /posts:
+    get:
+      summary: Obter todos os posts
+      description: Obtém todos os posts
+      responses:
+        '200':
+          description: Sucesso
+    post:
+      summary: Criar post
+      description: Cria um novo post
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                post_name:
+                  type: string
+                post_content:
+                  type: string
+      responses:
+        '200':
+          description: Sucesso
+  /posts/{id}:
+    get:
+      summary: Obter post por ID
+      description: Obtém um post pelo seu ID
+      parameters:
+        - name: id
+          in: path
+          description: ID do post a ser obtido
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Sucesso
+    put:
+      summary: Atualizar post por ID
+      description: Atualiza um post existente pelo seu ID
+      parameters:
+        - name: id
+          in: path
+          description: ID do post a ser atualizado
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                post_name:
+                  type: string
+                post_content:
+                  type: string
+      responses:
+        '200':
+          description: Sucesso
+    delete:
+      summary: Deletar post por ID
+      description: Deleta um post existente pelo seu ID
+      parameters:
+        - name: id
+          in: path
+          description: ID do post a ser deletado
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Sucesso
