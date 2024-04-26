@@ -2,7 +2,7 @@ from sqlalchemy import Column, Integer, String
 from database.database import db
 
 class User(db.Model):
-  __tablename__ = 'users'
+  __tablename__ = 'Users'
 
   id = Column(Integer, primary_key=True, autoincrement=True)
   name = Column(String(50), nullable=False)
@@ -18,7 +18,7 @@ class User(db.Model):
       "password": self.password}
   
 class ToDoList(db.Model):
-  __tablename__ = 'posts'
+  __tablename__ = 'Posts'
 
   id = Column(Integer, primary_key=True, autoincrement=True)
   post_name = Column(String(50), nullable=False)

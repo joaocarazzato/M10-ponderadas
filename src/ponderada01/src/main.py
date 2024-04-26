@@ -5,11 +5,21 @@ from database.models import User, ToDoList
 from flask_jwt_extended import JWTManager, set_access_cookies, create_access_token, get_jwt_identity, jwt_required
 import requests as http_request
 import json
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+POSTGRES_USER = os.getenv('POSTGRES_USER')
+POSTGRES_PASSWORD = os.getenv('POSTGRES_PASSWORD')
+POSTGRES_DB = os.getenv('POSTGRES_DB')
 
 
 app = Flask(__name__, template_folder="templates")
 # configure the SQLite database, relative to the app instance folder
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///project.db"
+# app.config["SQLALCHEMY_DATABASE_URI"] = f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@db:5432/{POSTGRES_DB}"
+app.config["SQLALCHEMY_DATABASE_URI"] = f"postgresql://postgres:postgres_pw@db:5432/postgres_database"
+
 # initialize the app with the extension
 db.init_app(app)
 # Setup the Flask-JWT-Extended extension
@@ -17,16 +27,6 @@ app.config["JWT_SECRET_KEY"] = "pokemon"
 # Seta o local onde o token será armazenado
 app.config['JWT_TOKEN_LOCATION'] = ['cookies']
 jwt = JWTManager(app)
-
-# Verifica se o parâmetro create_db foi passado na linha de comando
-import sys
-if len(sys.argv) > 1 and sys.argv[1] == 'create_db':
-    # cria o banco de dados
-    with app.app_context():
-        db.create_all()
-    # Finaliza a execução do programa
-    print("Database created successfully")
-    sys.exit(0)
 
 # end-points com interface
 
@@ -43,7 +43,7 @@ def user_register():
     return render_template("register.html")
 
 @app.route("/content", methods=["GET"])
-@jwt_required
+@jwt_required()
 def content():
     all_posts = http_request.get("http://localhost:5000/posts")
     print(all_posts)
@@ -218,5 +218,9 @@ def delete_user(id):
     db.session.commit()
     return jsonify(user.serialize())
 
+
+def main():
+    app.run(host="0.0.0.0", port=5000)
+
 if __name__ == "__main__":
-	app.run(debug=True)
+    main()
