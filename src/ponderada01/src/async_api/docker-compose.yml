@@ -1,0 +1,35 @@
+version: '1.0'
+services:
+  db_async:
+    image: postgres
+    container_name: db_async
+    restart: always
+    ports:
+      - 5123:5432
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres_pw
+      POSTGRES_DB: postgres_database
+    volumes:
+      - ./pData:/var/lib/postgresql/data
+      - ./db.sql:/docker-entrypoint-initdb.d/db.sql
+    healthcheck:      
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB} -t 1"]
+      interval: 20s
+      timeout: 10s
+      retries: 10
+      start_period: 10s
+
+  fastapi_app:
+    container_name: fastapi-app
+    restart: on-failure
+    depends_on:
+      db_async:
+        condition: service_healthy   
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 5000:5000     
+    links: 
+        - db_async

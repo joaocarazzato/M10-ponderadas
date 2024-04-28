@@ -11,4 +11,4 @@ COPY . .
 
 # RUN python3 main.py create_db
 
-CMD [ "python3", "main"]
+CMD [ "python3", "main.py"]
