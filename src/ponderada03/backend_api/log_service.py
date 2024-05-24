@@ -20,7 +20,7 @@ def on_connect(client, userdata, flags, rc):
     print("Conectado ao broker com código de resultado "+str(rc))
     # Inscreva no tópico aqui, ou se perder a conexão e se reconectar, então as
     # subscrições serão renovadas.
-    client.subscribe("#")
+    client.subscribe("service/#")
 
 @app.get("/messages")
 async def get_messages():

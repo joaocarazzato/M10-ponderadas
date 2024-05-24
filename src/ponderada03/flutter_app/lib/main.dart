@@ -1,11 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/api/firebase_api.dart';
+import 'package:flutter_app/api/storage_api.dart';
 import 'package:flutter_app/pagina_camera.dart';
 import 'package:flutter_app/registro.dart';
 import 'package:http/http.dart' as http;
+import 'package:firebase_core/firebase_core.dart';
 import 'dart:convert';
 
-
-void main() {
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+var fCMToken = '';
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  fCMToken = await FirebaseApi().initNotifications();
   runApp(const MyApp());
 }
 
@@ -16,26 +23,15 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      navigatorKey: navigatorKey,
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
       home: const MyHomePage(),
+      routes: {
+        PaginaCamera.route: (context) => const PaginaCamera()
+      },
     );
   }
 }
@@ -119,24 +115,34 @@ class _MyHomePageState extends State<MyHomePage> {
             //   Navigator.push(context, MaterialPageRoute(builder: (context) => const PaginaCamera()));
             // }, child: const Text("Clique aqui"))
             ElevatedButton(onPressed: () async{
+              print("TOKEN REQUEST!!!!: $fCMToken");
           var resposta = await http.post(Uri.parse("http://10.0.2.2:8000/auth/login"), 
           headers: <String, String>{
             'Content-Type': 'application/json; charset=UTF-8',
           },
           body: jsonEncode({
             'username': _controlleruser.text, 
-            'password': _controllerpass.text
+            'password': _controllerpass.text,
+            'token': fCMToken
           })
           );
           _resultadorequest = '';
           if (resposta.statusCode == 200) {
+            print(jsonDecode(resposta.body)['id']);
+            StorageApi().saveId(jsonDecode(resposta.body)['id']);
             // ignore: use_build_context_synchronously
             Navigator.push(context, MaterialPageRoute(builder: (context) => const PaginaCamera()));
           }
           else {
             setState(() {
+            if (resposta.statusCode != 500) {
+
             var respostaprocessada = jsonDecode(resposta.body);
             _resultadorequest = respostaprocessada['detail'];
+            }
+            else {
+              _resultadorequest = "Ocorreu um erro.";
+            }
           });
           }
           },  child: const Text("Entrar"))

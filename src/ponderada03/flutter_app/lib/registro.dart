@@ -88,7 +88,7 @@ class _MyWidgetState extends State<PaginaRegistro> {
           _resultadorequest = '';
           if (resposta.statusCode == 200) {
             // ignore: use_build_context_synchronously
-            Navigator.push(context, MaterialPageRoute(builder: (context) => const MyApp()));
+            navigatorKey.currentState?.pushNamed('/');
           }
           else {
             setState(() {

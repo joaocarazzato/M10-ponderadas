@@ -38,7 +38,9 @@ dependencies:
   http: ^1.2.1
   image_picker: ^1.1.1
   share_plus: ^9.0.0
-
+  firebase_core: ^2.31.1
+  firebase_messaging: ^14.9.3
+  flutter_secure_storage: ^9.2.2
 
 dev_dependencies:
   flutter_test:

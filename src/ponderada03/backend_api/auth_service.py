@@ -17,6 +17,11 @@ class UserInfo(BaseModel):
     username: str
     password: str
 
+class UserInfoMobile(BaseModel):
+    username: str
+    password: str
+    token: str
+
 templates = Jinja2Templates(directory="templates")
 
 app = FastAPI()
@@ -40,23 +45,34 @@ def publish_broker(sensor, message):
     try:
         
         message = "" + message
-        client.publish(f"{sensor}", message)
-        print(f"Publicado: {message} no tópico: '{sensor}'")
+        client.publish(f"service/{sensor}", message)
+        print(f"Publicado: {message} no tópico: 'service/{sensor}'")
     except Exception as e:
         print(f"Finalizando a execução da thread: {e}")
 
     client.disconnect()
 
 @app.post("/login")
-async def login(user_data: UserInfo, db: Session = Depends(get_async_db)):
+async def login(user_data: UserInfoMobile, db: Session = Depends(get_async_db)):
     async with db as session:
         stmt = select(User).filter(User.name == user_data.username)
         try:
             result = await session.execute(stmt)
             user = result.scalars().one()
+
             if user and user.password == user_data.password:
+                print("USER DATA TOKEN: ", user_data.token)
+                account_id = int(user.id)
+                db_user = await session.get(User, account_id)
+                print("DB USER: ", db_user)
+                db_user.token_id = user_data.token
+                await session.commit()
                 publish_broker("AUTH", f"[AUTH] Usuário com nome de [{user_data.username}] logado com sucesso!")
-                return {"status": "Login Success"}
+
+                return {
+                    "status": "Login Success",
+                    "id": account_id
+                    }
             else:
                 publish_broker("AUTH", f"[AUTH] Tentativa de login com usuário: [{user_data.username}] falhou!")
                 raise HTTPException(status_code=401, detail="Incorrect username or password")
