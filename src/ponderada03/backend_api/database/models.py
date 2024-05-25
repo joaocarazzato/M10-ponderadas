@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, LargeBinary
 from database.database import db
 
 class User(db):
@@ -24,7 +24,7 @@ class Images(db):
   __tablename__ = 'images'
 
   id = Column(Integer, primary_key=True, autoincrement=True)
-  content = Column(String(50000), nullable=False)
+  content = Column(LargeBinary, nullable=False)
   user_id = Column(Integer, nullable=False)
 
   def __repr__(self):

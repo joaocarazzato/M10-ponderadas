@@ -18,7 +18,7 @@ class FirebaseApi {
     print("message: ${message.data['data']}");
     navigatorKey.currentState?.pushNamed(
       '/camera',
-      // arguments: int.parse(message.data['data']),
+      arguments: message,
     );
     
   }

@@ -4,13 +4,10 @@ from database.models import User
 from database.database import SessionLocal
 from fastapi.templating import Jinja2Templates
 import uvicorn
-from database.models import User
 from sqlalchemy.future import select
 from sqlalchemy.exc import NoResultFound
 from pydantic import BaseModel
 import paho.mqtt.client as mqtt
-from typing import Optional
-
 
 
 class UserInfo(BaseModel):

@@ -1,5 +1,7 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/api/storage_api.dart';
 import 'package:image_picker/image_picker.dart';
@@ -18,10 +20,19 @@ class PaginaCamera extends StatefulWidget {
 class _PaginaCamera extends State<PaginaCamera> {
   String info = "";
   Uint8List? pickedFile;
-
+  bool executed = false;
 
   @override
   Widget build(BuildContext context) {
+
+    final message = ModalRoute.of(context)!.settings.arguments;
+    if (message is RemoteMessage && !executed) {
+      executed = true;
+      if (message.data['user_id'] != null) {
+        print("MESSAGE: ${message.data['user_id']}");
+        getProcessedImage(message.data['user_id']);
+      }
+    }
     return Scaffold(
       appBar: AppBar(title: Text("Mudança de imagem"),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -53,6 +64,22 @@ class _PaginaCamera extends State<PaginaCamera> {
     );
   }
 
+  Future<void> getProcessedImage(String id) async {
+    var resposta = await http.post(Uri.parse("http://10.0.2.2:8000/image/get_image"), 
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({
+        'id': int.parse(id), 
+      })
+    );
+    if (resposta.statusCode == 200) {
+        setState(() {
+          pickedFile = resposta.bodyBytes;
+        });
+    }
+  }
+
   Future<void> teste() async {
     var id = await StorageApi().getId();
     print("teste");
@@ -81,4 +108,4 @@ class _PaginaCamera extends State<PaginaCamera> {
       }
     }
     }
-}
+  }

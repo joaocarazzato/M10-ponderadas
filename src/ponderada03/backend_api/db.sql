@@ -7,6 +7,6 @@ CREATE TABLE Users (
 
 CREATE TABLE Images (
     id SERIAL PRIMARY KEY,
-    content VARCHAR(50000) NOT NULL,
+    content BYTEA NOT NULL,
     user_id INT NOT NULL
 )
