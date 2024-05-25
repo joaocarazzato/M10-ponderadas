@@ -1,6 +1,5 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_app/main.dart';
-import 'package:flutter_app/pagina_camera.dart';
 
 
 @pragma('vm:entry-point')

@@ -10,10 +10,30 @@ class User(db):
   token_id = Column(String(200), nullable=True)
 
   def __repr__(self):
-    return f'<User:[id:{self.id}, name:{self.name}, password:{self.password}]>'
+    return f'<User:[id:{self.id}, name:{self.name}, password:{self.password}, token_id:{self.token_id}]>'
   
   def serialize(self):
     return {
       "id": self.id,
       "name": self.name,
-      "password": self.password}
+      "password": self.password,
+      "token_id": self.token_id
+      }
+  
+class Images(db):
+  __tablename__ = 'images'
+
+  id = Column(Integer, primary_key=True, autoincrement=True)
+  content = Column(String(50000), nullable=False)
+  user_id = Column(Integer, nullable=False)
+
+  def __repr__(self):
+    return f'<User:[id:{self.id}, content:{self.content}, user_id:{self.user_id}]>'
+  
+  def serialize(self):
+    return {
+      "id": self.id,
+      "content": self.content,
+      "user_id": self.user_id
+
+    }

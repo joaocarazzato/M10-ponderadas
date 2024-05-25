@@ -4,3 +4,9 @@ CREATE TABLE Users (
     password VARCHAR(26) NOT NULL,
     token_id VARCHAR(200) NULL
 );
+
+CREATE TABLE Images (
+    id SERIAL PRIMARY KEY,
+    content VARCHAR(50000) NOT NULL,
+    user_id INT NOT NULL
+)

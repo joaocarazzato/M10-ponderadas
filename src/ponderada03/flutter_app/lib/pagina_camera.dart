@@ -71,10 +71,10 @@ class _PaginaCamera extends State<PaginaCamera> {
       var response = await request.send();
       print(response);
       if (response.statusCode == 200) {
-        final responseData = await http.Response.fromStream(response);
+        // final responseData = await http.Response.fromStream(response);
         setState(() {
-          info = "Sucesso!";
-          pickedFile = responseData.bodyBytes;
+          info = "Sucesso! Sua imagem foi adicionada ao processamento! Te avisaremos quando estiver concluída!";
+          // pickedFile = responseData.bodyBytes;
         });
       } else {
         info = "Ocorreu um erro: ${response.statusCode}";
