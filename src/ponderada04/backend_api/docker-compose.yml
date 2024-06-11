@@ -1,0 +1,135 @@
+version: '2.0'
+services:
+  db_async:
+    image: postgres
+    container_name: db_async
+    restart: always
+    ports:
+      - 5123:5432
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres_pw
+      POSTGRES_DB: postgres_database
+    volumes:
+      - ./pData:/var/lib/postgresql/data
+      - ./db.sql:/docker-entrypoint-initdb.d/db.sql
+    healthcheck:      
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB} -t 1"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+      start_period: 10s
+
+  auth:
+    container_name: auth
+    restart: on-failure
+    depends_on:
+      db_async:
+        condition: service_healthy
+      mqtt-broker:
+        condition: service_started
+    # image: auth
+    build:
+      context: ./auth
+      dockerfile: auth.dockerfile
+    ports:
+      - 5000:5000     
+    links: 
+        - db_async
+    dns:
+        - 8.8.8.8
+
+  log:
+    container_name: log
+    restart: on-failure
+    depends_on:
+      db_async:
+        condition: service_healthy
+      mqtt-broker:
+        condition: service_started
+    # image: log
+    build:
+      context: ./log
+      dockerfile: log.dockerfile
+    ports:
+      - 5100:5100     
+    links: 
+        - db_async
+    dns:
+        - 8.8.8.8
+
+  image:
+    container_name: image
+    restart: on-failure
+    depends_on:
+      db_async:
+        condition: service_healthy
+    # image: image
+    build:
+      context: ./image
+      dockerfile: image.dockerfile
+    ports:
+      - 5200:5200     
+    links: 
+        - db_async
+    dns:
+        - 8.8.8.8
+
+  mqtt-broker:
+    container_name: mqtt
+    image: eclipse-mosquitto:latest
+    volumes:
+      - ./mosquitto/config:/mosquitto/config
+    ports:
+    - target: 1891
+      published: 1891
+      protocol: tcp
+      mode: host
+    - target: 9001
+      published: 9001
+      protocol: tcp
+      mode: host
+
+  gateway:
+    build: 
+      dockerfile: ./nginx/nginx.dockerfile
+    ports:
+      - "8000:80"
+    depends_on:
+      - auth
+      - log
+      - image
+  
+  filebeat:
+    build:
+      context: ./filebeat
+      dockerfile: filebeat.dockerfile
+    container_name: filebeat
+    volumes:
+      - ./log/logs:/src/logs
+    depends_on:
+      - log
+    network_mode: "host"
+
+  elasticsearch:
+    build:
+      context: ./elasticsearch
+      dockerfile: elasticsearch.dockerfile
+    container_name: elasticsearch
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+
+  kibana:
+    build:
+      context: ./kibana
+      dockerfile: kibana.dockerfile
+    container_name: kibana
+    ports:
+      - "5601:5601"
+    depends_on:
+      - elasticsearch
+
+volumes:
+    elasticsearch_data:
+        driver: local
