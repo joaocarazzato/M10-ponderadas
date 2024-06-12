@@ -22,13 +22,13 @@ def on_message(client, userdata, message):
     received_message = message.payload.decode()
     print(f"Recebido: {received_message} no tópico {topic}")
 
-    if topic == "INFO":
+    if topic == "SERVICE/INFO":
         LOGGER.info({"message": received_message})
-    elif topic == "WARN":
+    elif topic == "SERVICE/WARN":
         LOGGER.warning({"message": received_message})
-    elif topic == "ERROR":
+    elif topic == "SERVICE/ERROR":
         LOGGER.error({"message": received_message})
-    elif topic == "CRITICAL":
+    elif topic == "SERVICE/CRITICAL":
         LOGGER.critical({"message": received_message})
     else:
         pass

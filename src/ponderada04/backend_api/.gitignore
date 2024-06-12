@@ -3,3 +3,4 @@ instance/project.db
 database/__pycache__
 pData
 image/serviceKey.json
+logs-volume

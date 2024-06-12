@@ -47,6 +47,8 @@ services:
         condition: service_healthy
       mqtt-broker:
         condition: service_started
+    volumes:
+      - ./logs-volume:/python-docker/logs
     # image: log
     build:
       context: ./log
@@ -106,7 +108,7 @@ services:
       dockerfile: filebeat.dockerfile
     container_name: filebeat
     volumes:
-      - ./log/logs:/src/logs
+      - ./logs-volume:/logs
     depends_on:
       - log
     network_mode: "host"

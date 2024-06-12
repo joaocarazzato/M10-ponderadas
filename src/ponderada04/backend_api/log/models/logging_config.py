@@ -1,6 +1,6 @@
 import logging
 import logging.handlers
-import time
+import os
 
 class LoggerSetup():
 
@@ -24,7 +24,12 @@ class LoggerSetup():
         console.setFormatter(formatter)
 
         # Adiciona um gerenciador de rotação para o logs. Esse comportamento faz com que o arquivo que está sendo criado para guardar os logs possa ser alterado de acordo com o tamanho do arquivo ou o tempo de criação. Também é possível definir a quantidade de arquivos anteriores de logs serão armazenados.
-        log_file = "../logs/app.log"
+        log_file = "./logs/app.log"
+
+        log_dir = os.path.dirname(log_file)
+        if not os.path.exists(log_dir):
+            os.makedirs(log_dir)
+
         # Mais informações sobre a classe: https://docs.python.org/3/library/logging.handlers.html#timedrotatingfilehandler
         # Neste caso, estamos configurando nosso arquivo de log para ser rotacionado a cada 5 minutos, mantendo 3 arquivos anteriores.
         file = logging.handlers.TimedRotatingFileHandler(log_file, when='M', interval=5, backupCount=3)

@@ -19,9 +19,9 @@ filebeat.inputs:
   scan_frequency: 1s
   enabled: true
   paths:
-    - /src/logs/*
+    - /logs/*
   fields:
-    - service: backend
+    - service: log
   fields_under_root: true
 
 output.elasticsearch:
