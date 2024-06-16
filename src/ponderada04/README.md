@@ -10,6 +10,7 @@ O objetivo desse repositório é a entrega da ponderada onde o objetivo era a cr
   - Manipulação de imagem: É possível enviarmos imagens para uma fila a fim de processá-la e aplicar filtros na mesma, recebendo uma notificação e obtendo-a quando ela ficar pronta.
   - Notificações: Notificações são enviadas assim que a imagem termina seu processamento, afim do usuário poder visualizá-la com mais facilidade com essa informação.
   - Logging: Possuímos um sistema de logs, tanto pelo endpoint quanto pelos arquivos, registrando falhas, falhas críticas e avisos que podem ajudar a depurar bugs, erros e outros casos.
+  - Gateway NGINX: Responsável por juntar todos esses sistemas em um lugar só, sendo o intermediário entre o usuário e o backend.
 
 ## Como executar?
 
